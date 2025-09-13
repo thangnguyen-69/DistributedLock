@@ -4,6 +4,7 @@ using Grpc.Core;
 using Medallion.Threading.Internal;
 using V3Lockpb;
 
+using dotnet_etcd;
 namespace Medallion.Threading.Etcd;
 
 internal class EtcdClientWrapper 

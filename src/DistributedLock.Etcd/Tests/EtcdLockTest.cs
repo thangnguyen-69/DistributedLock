@@ -1,7 +1,7 @@
-﻿using Medallion.Threading.Etcd;
+using Medallion.Threading.Etcd;
 using NUnit.Framework;
 
-namespace Medallion.Threading.Tests.Etcd;
+namespace Medallion.Threading.Etcd.Tests;
 
 public class EtcdLockTest
 {
@@ -9,9 +9,9 @@ public class EtcdLockTest
 
 
     [Test]
-    public void EtcdBasicAcquireLockSync_HappyPath()
+    public async Task EtcdBasicAcquireLockSync_HappyPath()
     {
-        using var client = this._etcdClusterBuilder.CreateClientToEtcdCluster();
+        using var client = await this._etcdClusterBuilder.CreateClientToEtcdCluster();
         var lock2 = new EtcdLeaseDistributedLock(client, "etcd");
         using var handle2 = lock2.TryAcquire();
         Assert.That(handle2, Is.Not.Null, "Failed to acquire lock");
@@ -20,7 +20,7 @@ public class EtcdLockTest
     [Test]
     public async Task EtcdBasicAcquireLockAsync_HappyPath()
     {
-        using var client = this._etcdClusterBuilder.CreateClientToEtcdCluster();
+        using var client = await this._etcdClusterBuilder.CreateClientToEtcdCluster();
         var lock2 = new EtcdLeaseDistributedLock(client, "etcd");
         await using var handle2 = await lock2.TryAcquireAsync();
         Assert.That(handle2, Is.Not.Null, "Failed to acquire lock");
@@ -30,7 +30,7 @@ public class EtcdLockTest
     [Test]
     public async Task CreateLockAndAcquireInDifferentScope()
     {
-        using var client = this._etcdClusterBuilder.CreateClientToEtcdCluster();
+        using var client = await this._etcdClusterBuilder.CreateClientToEtcdCluster();
 
         async Task<IDistributedSynchronizationHandle> GetHandle()
         {

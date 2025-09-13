@@ -1,13 +1,30 @@
+#if NET8_0_OR_GREATER
 using Medallion.Threading.Etcd;
+using Medallion.Threading.Etcd.Tests;
+using NUnit.Framework;
 
 namespace Medallion.Threading.Tests.Etcd;
 
 public sealed class
     TestingEtcdLeaseDistributedLockProvider : TestingLockProvider<TestingEtcdLeaseSynchronizationStrategy>
 {
+    private readonly EtcdClusterSetup _etcdClusterSetup;
+
+    public TestingEtcdLeaseDistributedLockProvider()
+    {
+        this._etcdClusterSetup = new EtcdClusterSetup();
+        this._etcdClusterSetup.ClusterSetup();
+    }
+
+    public override void Dispose()
+    {
+        
+    }
+    
+    
     public override IDistributedLock CreateLockWithExactName(string name)
     {
-        return new EtcdLeaseDistributedLock(EtcdSetupFixture.EtcdClusterSetup.CreateClientToEtcdCluster(), name,
+        return new EtcdLeaseDistributedLock(this._etcdClusterSetup.CreateClientToEtcdCluster().Result, name,
             this.Strategy.Options);
     }
 
@@ -57,3 +74,4 @@ public sealed class TestingEtcdLeaseSynchronizationStrategy : TestingSynchroniza
         }
     }
 }
+#endif
